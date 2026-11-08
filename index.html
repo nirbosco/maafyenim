@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מאפייני הכשרות חותם · שאלון אישי</title>
+<meta name="description" content="שאלון אישי: איפה ההכשרה שלי עומדת על מאפייני הכשרות חותם">
+<meta name="theme-color" content="#0046ff">
+<link rel="icon" type="image/png" href="assets/hotam-logo-hebrew.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#0046ff; --blue-2:#3c5af0; --sky:#0fb4f5; --teal:#23d7cd; --purple:#6437eb;
+  --bg:#f0f0f0; --card:#ffffff; --ink:#0a1330; --ink-mute:#4a5372; --ink-soft:#8a91a8;
+  --line:#dfe1e8; --line-2:#c9ccd8; --tint:#eef2ff; --tint-2:#dbe4ff;
+  --err:#d4344b;
+  --grad:linear-gradient(120deg,var(--teal) 0%,var(--sky) 30%,var(--blue) 62%,var(--purple) 100%);
+  --r:24px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Heebo',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  min-height:100dvh;display:flex;flex-direction:column;
+}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:12px}
+
+/* ---------- top bar ---------- */
+.top{
+  position:sticky;top:0;z-index:20;background:rgba(240,240,240,.86);
+  backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);
+}
+.top-inner{max-width:760px;margin:0 auto;padding:14px 16px 12px;display:flex;align-items:center;gap:14px}
+.top img{height:26px;width:auto;display:block}
+.top .kicker{font-size:13px;font-weight:700;color:var(--ink-mute);letter-spacing:.02em;white-space:nowrap}
+@media(max-width:420px){.top .kicker .k1{display:none}}
+.top .kicker span{color:var(--ink-soft);font-weight:500;margin:0 6px}
+.top .save{margin-inline-start:auto;font-size:12px;color:var(--ink-soft);opacity:0;transition:opacity .4s}
+.top .save.on{opacity:1}
+.progress{max-width:760px;margin:0 auto;padding:0 16px 12px;display:none;gap:5px}
+.progress.on{display:flex}
+.seg{flex:1;height:6px;border-radius:99px;background:var(--line);position:relative;overflow:hidden;transition:background .3s}
+.seg::after{content:"";position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:right;transition:transform .5s var(--ease)}
+.seg.done::after{transform:scaleX(1)}
+.seg.cur{background:var(--line-2)}
+.seg.cur::after{transform:scaleX(.35)}
+.seg.done.cur::after{transform:scaleX(1)}
+.seg[data-i]{cursor:pointer}
+
+/* ---------- stage ---------- */
+main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:8px 16px 120px}
+.screen{display:none}
+.screen.on{display:block;animation:in .55s var(--ease) both}
+.screen.on.back{animation-name:inBack}
+@keyframes in{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes inBack{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen.on{animation:none}*{transition:none!important}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:28px 22px}
+@media(min-width:640px){.card{padding:40px 44px}}
+
+/* ---------- welcome ---------- */
+.hero{
+  position:relative;overflow:hidden;border-radius:var(--r);color:#fff;
+  background:var(--blue);padding:34px 22px 30px;margin-bottom:14px;
+}
+@media(min-width:640px){.hero{padding:52px 44px 44px}}
+.hero::before{
+  content:"";position:absolute;inset:auto -30% -70% auto;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(35,215,205,.55),rgba(15,180,245,.15) 45%,transparent 70%);
+}
+.hero::after{
+  content:"";position:absolute;inset:-40% auto auto -20%;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(100,55,235,.55),transparent 65%);
+}
+.hero > *{position:relative;z-index:1}
+.hero .rings{position:absolute;left:22px;top:22px;z-index:1;opacity:.9}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:5px 14px;font-size:13px;font-weight:500}
+.hero h1{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.08;margin:18px 0 14px;letter-spacing:-.01em}
+.hero p{font-size:18px;color:rgba(255,255,255,.88);max-width:30em}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.facts span{background:rgba(255,255,255,.14);border-radius:99px;padding:6px 14px;font-size:14px;font-weight:500}
+
+.field{margin-top:22px}
+.field:first-child{margin-top:0}
+.label{display:block;font-weight:700;font-size:17px;margin-bottom:8px}
+.label small{font-weight:400;color:var(--ink-soft);font-size:14px;margin-inline-start:6px}
+.input,.area{
+  width:100%;border:1.5px solid var(--line-2);border-radius:16px;background:#fff;
+  padding:14px 16px;font-size:17px;transition:border-color .2s,box-shadow .2s;
+}
+.input:focus,.area:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--tint-2)}
+.area{min-height:110px;resize:vertical;line-height:1.55}
+.input::placeholder,.area::placeholder{color:#a3a8bb}
+.field.bad .input{border-color:var(--err)}
+.msg{font-size:14px;color:var(--err);margin-top:6px;min-height:0;display:none}
+.field.bad .msg{display:block}
+
+/* ---------- characteristic ---------- */
+.char-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.num{
+  width:46px;height:46px;border-radius:50%;border:1.5px solid var(--blue);color:var(--blue);
+  display:grid;place-items:center;font-weight:800;font-size:16px;flex:none;
+}
+.of{font-size:14px;color:var(--ink-soft);font-weight:500}
+.char-title{font-size:clamp(26px,5.6vw,38px);font-weight:900;line-height:1.15;letter-spacing:-.01em}
+.char-sub{font-size:18px;color:var(--ink-mute);margin-top:10px;max-width:34em}
+
+.more{margin-top:16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.more-btn{
+  width:100%;display:flex;align-items:center;gap:10px;padding:14px 2px;
+  color:var(--blue);font-weight:700;font-size:15px;text-align:start;
+}
+.more-btn .chev{width:28px;height:28px;border-radius:50%;background:var(--tint);display:grid;place-items:center;transition:transform .35s var(--ease),background .2s}
+.more-btn:hover .chev{background:var(--tint-2)}
+.more.open .chev{transform:rotate(180deg)}
+.more-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+.more.open .more-body{grid-template-rows:1fr}
+.more-body > div{overflow:hidden}
+.more-text{padding:2px 2px 20px;color:var(--ink-mute);font-size:16px;line-height:1.75}
+.more-text p + p{margin-top:12px}
+.more-text p:first-child{color:var(--ink);font-weight:500}
+
+.q{margin-top:28px}
+.q-title{font-size:19px;font-weight:800;margin-bottom:4px}
+.q-hint{font-size:14px;color:var(--ink-soft)}
+
+/* scale: growing circles, no middle */
+.scale{margin-top:18px}
+.dots{display:grid;grid-template-columns:repeat(6,1fr);align-items:end;gap:4px;position:relative}
+.dots::before{content:"";position:absolute;right:8%;left:8%;bottom:27px;height:2px;background:var(--line);z-index:0}
+.dot{
+  position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:6px 0;border-radius:16px;
+}
+.dot i{
+  --s:26px;width:var(--s);height:var(--s);border-radius:50%;display:block;
+  background:#fff;border:2px solid var(--line-2);
+  transition:transform .35s var(--ease),background .25s,border-color .25s,box-shadow .25s;
+}
+.dot:nth-child(1) i{--s:22px}.dot:nth-child(2) i{--s:28px}.dot:nth-child(3) i{--s:34px}
+.dot:nth-child(4) i{--s:40px}.dot:nth-child(5) i{--s:46px}.dot:nth-child(6) i{--s:52px}
+.dot b{font-size:13px;font-weight:700;color:var(--ink-soft);transition:color .2s}
+.dot:hover i{border-color:var(--blue);transform:scale(1.06)}
+.dot.fill i{background:var(--tint-2);border-color:var(--tint-2)}
+.dot.sel i{background:var(--blue);border-color:var(--blue);box-shadow:0 0 0 6px var(--tint);transform:scale(1.08)}
+.dot.sel b{color:var(--blue)}
+.dot.pop i{animation:pop .45s var(--ease)}
+@keyframes pop{40%{transform:scale(1.25)}100%{transform:scale(1.08)}}
+.ends{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-top:6px;padding:0 2px}
+.verdict{
+  margin-top:14px;min-height:48px;border-radius:14px;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-weight:700;color:var(--ink-soft);font-size:16px;transition:background .3s,color .3s;text-align:center;padding:10px 14px;
+}
+.verdict.on{background:var(--tint);color:var(--blue)}
+.scale.bad .verdict{background:#fdecef;color:var(--err)}
+
+.add{
+  margin-top:14px;display:inline-flex;align-items:center;gap:8px;border:1.5px dashed var(--line-2);
+  border-radius:99px;padding:9px 18px;font-weight:700;font-size:15px;color:var(--ink-mute);transition:border-color .2s,color .2s;
+}
+.add:hover{border-color:var(--blue);color:var(--blue)}
+.add[hidden]{display:none}
+
+/* ---------- summary chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{
+  border:1.5px solid var(--line-2);border-radius:99px;padding:9px 16px;font-size:15px;font-weight:500;
+  background:#fff;transition:all .2s;display:inline-flex;align-items:center;gap:8px;text-align:start;
+}
+.chip:hover{border-color:var(--blue)}
+.chip .v{font-size:12px;font-weight:700;color:var(--ink-soft);background:var(--bg);border-radius:99px;padding:1px 8px}
+.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip[aria-pressed="true"] .v{background:rgba(255,255,255,.2);color:#fff}
+
+/* ---------- bottom nav ---------- */
+.nav{
+  position:fixed;bottom:0;right:0;left:0;z-index:30;
+  background:linear-gradient(to top,var(--bg) 62%,rgba(240,240,240,0));
+  padding:22px 16px calc(16px + env(safe-area-inset-bottom));
+}
+.nav-inner{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:99px;
+  padding:15px 28px;font-weight:800;font-size:17px;transition:transform .15s,background .2s,opacity .2s;
+}
+.btn:active{transform:scale(.97)}
+.btn-main{background:var(--blue);color:#fff;flex:1}
+@media(min-width:640px){.btn-main{flex:0 0 auto;min-width:220px;margin-inline-start:auto}}
+.btn-main:hover{background:#0039d4}
+.btn-ghost{border:1.5px solid var(--line-2);color:var(--ink);background:#fff;padding:15px 20px}
+.btn-ghost[hidden]{display:none}
+.btn[disabled]{opacity:.6;pointer-events:none}
+.arrow{display:inline-block;transition:transform .2s}
+.btn-main:hover .arrow{transform:translateX(-4px)}
+
+.status{font-size:15px;color:var(--err);text-align:center;margin-top:12px;min-height:22px}
+
+/* ---------- done ---------- */
+.done-hero{
+  border-radius:var(--r);background:var(--grad);color:#fff;padding:36px 22px;text-align:center;position:relative;overflow:hidden;
+}
+@media(min-width:640px){.done-hero{padding:50px 44px}}
+.done-hero h2{font-size:clamp(30px,6vw,44px);font-weight:900;line-height:1.1;margin:16px 0 8px}
+.done-hero p{font-size:18px;opacity:.92}
+.check{width:72px;height:72px;margin:0 auto;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
+.check svg path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .7s .3s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.map{margin-top:14px}
+.map h3{font-size:22px;font-weight:900;margin-bottom:4px}
+.map .sub{color:var(--ink-soft);font-size:15px;margin-bottom:20px}
+.row{display:grid;grid-template-columns:1fr;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+@media(min-width:640px){.row{grid-template-columns:minmax(0,1fr) 230px;align-items:center;gap:20px}}
+.row-name{font-weight:700;font-size:15px;line-height:1.35}
+.bar{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.bar span{height:12px;border-radius:99px;background:var(--line)}
+.bar span.on{background:var(--blue)}
+.bar.anim span.on{animation:grow .6s var(--ease) both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:none}}
+.foot{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:28px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <img src="assets/hotam-logo-hebrew.png" alt="חותם">
+    <div class="kicker"><b class="k1" style="font-weight:700">פיתוח מקצועי<span>·</span></b>מאפייני ההכשרות</div>
+    <div class="save" id="save">נשמר במכשיר</div>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main id="main">
+
+  <!-- welcome -->
+  <section class="screen on" data-screen="welcome">
+    <div class="hero">
+      <svg class="rings" width="70" height="70" viewBox="0 0 70 70" fill="none" aria-hidden="true">
+        <circle cx="35" cy="35" r="10" stroke="#fff" stroke-opacity=".9" stroke-width="1.5"/>
+        <circle cx="35" cy="35" r="21" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>
+        <circle cx="35" cy="35" r="33" stroke="#fff" stroke-opacity=".25" stroke-width="1.5"/>
+      </svg>
+      <span class="pill">שאלון אישי</span>
+      <h1>איפה ההכשרה שלי<br>עומדת?</h1>
+      <p>תשעה מאפיינים מגדירים הכשרה של חותם. עברו עליהם אחד אחד, סמנו כמה כל מאפיין נוכח בהכשרה שאתם מובילים, ותנו דוגמה מהשטח.</p>
+      <div class="facts"><span>9 מאפיינים</span><span>כ־15 דקות</span><span>אפשר לעצור ולחזור</span></div>
+    </div>
+    <div class="card">
+      <div class="field" id="f-name">
+        <label class="label" for="name">שם מלא</label>
+        <input class="input" id="name" autocomplete="name" placeholder="השם שלך">
+        <div class="msg">צריך שם כדי שנדע של מי התשובות</div>
+      </div>
+      <div class="field" id="f-training">
+        <label class="label" for="training">שם ההכשרה</label>
+        <input class="input" id="training" placeholder="למשל: חותם נעמי, אופק לניהול">
+        <div class="msg">על איזו הכשרה עונים?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- characteristics are injected here -->
+  <div id="chars"></div>
+
+  <!-- summary -->
+  <section class="screen" data-screen="summary">
+    <div class="card">
+      <div class="char-head"><div class="num" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l-6 6 6 6"/></svg>
+      </div><div class="of">מבט קדימה</div></div>
+      <h2 class="char-title">ומה הלאה?</h2>
+      <p class="char-sub">עברתם על כל המאפיינים. עכשיו כמה מילים על מה שהייתם רוצים לקחת מכאן.</p>
+
+      <div class="q">
+        <div class="q-title">באילו מאפיינים הייתי רוצה להעמיק בלמידה?</div>
+        <div class="q-hint">אפשר לבחור כמה. המספר הקטן הוא הדירוג שנתתם.</div>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="field" style="margin-top:22px">
+        <label class="label" for="deepen">על מה בדיוק הייתי רוצה ללמוד?<small>לא חובה</small></label>
+        <textarea class="area" id="deepen" placeholder="שאלה שמעסיקה אותי, נושא שחסר לי, משהו שראיתי אצל אחרים"></textarea>
+      </div>
+      <div class="field">
+        <label class="label" for="embed">מה הייתי רוצה להטמיע יותר בהכשרה שלי?</label>
+        <textarea class="area" id="embed" placeholder="מה הייתי מוסיף, משנה או מחזק כבר במחזור הבא"></textarea>
+      </div>
+      <div class="status" id="status" role="status"></div>
+    </div>
+  </section>
+
+  <!-- done -->
+  <section class="screen" data-screen="done">
+    <div class="done-hero">
+      <div class="check"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2 id="done-title">תודה</h2>
+      <p>התשובות נשמרו. הנה התמונה שעלתה מהן.</p>
+    </div>
+    <div class="card map">
+      <h3 id="map-title">המפה של ההכשרה</h3>
+      <div class="sub">כמה כל מאפיין נוכח, לפי מה שסימנתם</div>
+      <div id="map"></div>
+    </div>
+    <div class="foot">חותם · אחריות לחינוך בישראל</div>
+  </section>
+</main>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <button class="btn btn-ghost" id="back" hidden aria-label="חזרה">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="btn btn-main" id="next"><span id="next-label">מתחילים</span><span class="arrow">←</span></button>
+  </div>
+</nav>
+
+<script>
+/* ---------- נתונים ---------- */
+const FULL = [{"title": "הכשרה מונעת אג'נדה חברתית־חינוכית", "body": ["הכשרות חותם מונעות מאג'נדה חברתית־חינוכית הרואה בחיזוק החינוך הציבורי את ייעודנו, ופועלת לכך שכל ילדה וילד יוכלו לעצב את עתידם ואת המציאות שבה הם חיים, ללא תלות ברקע שממנו באו.", "משימתן של הכשרות חותם הוא לחזק את החינוך הציבורי בישראל באמצעות איתור אנשים ונשים בעלי פוטנציאל להובלת שינוי, הכשרתם לתפקידים בעולם החינוך וליווים בשדה.", "באמצעות מהלכים אלה תצמח קהילה של מנהיגים ומנהיגות, סוכני וסוכנות שינוי, שייקחו אחריות מוסרית ומקצועית על קידום מהלכים משמעותיים במערכת החינוך.", "סוכני שינוי אלה יפעלו מתוך: גישה פרואקטיבית, תחושת חוללות ומסוגלות."]}, {"title": "למידה המשולבת בפעולה בשדה החינוכי", "body": ["הכשרות חותם רואות בלמידה מעמיקה ומתמשכת, המשולבת בעשייה בשדה החינוכי, עיקרון יסוד בתהליך ההכשרה.", "חלק מתוכניות ההכשרה מתקיימות במתכונת של למידה תוך כדי עבודה (OJT), שבה הלמידה והפעולה שלובות זו בזו. תוכניות אחרות מכשירות עתודות לתפקידים חדשים, וגם בהן הלמידה אינה מסתכמת ברכישת ידע תיאורטי, אלא כוללת התנסות מעשית, התבוננות בעשייה ועיבוד של חוויות מהשדה.", "אנו תופסים את היחסים בין הלמידה לעשייה כתהליך הדדי ומתמשך: לומדים מתוך ההתנסות ומביאים את הלמידה לידי ביטוי בהתנסות מחודשת. כך נוצרת תנועה מתמדת בין ידע, פעולה, התבוננות והתפתחות מקצועית."]}, {"title": "תנועה באנשים", "body": ["ההכשרות של חותם הן הכשרות בהן מתחוללת תנועה באנשים המוכשרים. מטרתן אינה רק להקנות ידע, מיומנויות וכלים מקצועיים, אלא לחולל שינוי עמוק ומתמשך באופן שבו המשתתפים מבינים את המציאות, תופסים את תפקידם בתוכה ובוחרים לפעול בה.", "הכשרה טרנספורמטיבית זו היא תהליך למידה והתפתחות המבקש לחולל שינוי בתפיסות העולם, בזהות המקצועית, בעמדות, בדפוסי החשיבה ובדרכי הפעולה של המשתתפים, באופן המאפשר להם לפעול אחרת ולהוביל שינוי בסביבתם.", "מרכיב מרכזי בתהליך הוא הבניית זהות מקצועית מתפתחת: בירור מחודש של תפיסת התפקיד, של האחריות הנלווית אליו ושל האפשרויות הגלומות בו להובלת שינוי.", "הצלחתה של ההכשרה אינה נמדדת רק במה שהמשתתפים למדו, אלא גם במה שהשתנה באופן שבו הם חושבים, פועלים ומשפיעים על סביבתם.", "תפיסה זו משפיעה על כלל מרכיבי ההכשרה: התכנים, המבנה, תהליכי הלמידה, הפרקטיקות הפדגוגיות ואף דמותם ואופן פעולתם של מובילי ההכשרה."]}, {"title": "הקבוצה כמרחב ללמידה", "body": ["הכשרות חותם מציבות את הקבוצה במרכז תהליך הלמידה. תפיסה זו מבטאת את ההבנה שלמידה אינה מתרחשת רק אצל היחיד, אלא גם באמצעות אינטראקציות חברתיות, מפגש בין נקודות מבט, שיח ועיבוד משותף של ידע והתנסויות.", "הלמידה נתפסת כתהליך חברתי המתקיים בהקשר תרבותי וחברתי מסוים. בהתאם לכך, אנו מבקשים לנוע מתפיסה של למידה כרכישת ידע לתפיסה של למידה כהשתתפות בקהילה, שבה נבנים ידע, משמעות וזהות מקצועית.", "לצד זאת, ההכשרות מבקשות לפתח את יכולתם של המשתתפים לפעול יחד במרחב החינוכי, כקבוצת משימה המקדמת מטרות משותפות. הסיסמה \"שינוי עושים ביחד\" מבטאת תפיסה זו, והיא רלוונטית היום לא פחות משהייתה בעבר.", "מתוך כך, תפקיד המנחה אינו מסתכם בהובלת התוכן. עליו להיות מקצוען בהנחיית קבוצות, לזהות תהליכים קבוצתיים ולרתום אותם ללמידה ולהתפתחות.", "המנחה אחראי ליצירת מרחב בטוח ופתוח, המאפשר התנסות, שיח כן, התמודדות עם מחלוקות, התפתחות אישית ומקצועית ויצירת תחושת שייכות. בניית היחסים בין חברי הקבוצה ובינם לבין המנחה, לצד טיפוח המחויבות למשימה המשותפת, הן חלק בלתי נפרד מעבודתו."]}, {"title": "ליווי העשייה החינוכית בשדה", "body": ["העשייה של המשתתפים בשדה החינוכי היא חלק בלתי נפרד מתהליך הכשרתם. השדה הבית־ספרי, החינוכי הבלתי פורמלי או הרשותי אינו רק המקום שבו מיישמים את הנלמד, אלא גם מרחב משמעותי ללמידה, לצמיחה ולהתפתחות מקצועית.", "אנו מאמינים כי כדי להפוך התנסות להזדמנות ללמידה משמעותית, נדרש ליווי מקצועי המאפשר למשתתפים להתבונן בעשייתם, לזהות אתגרי אמת, לבחון חלופות ולפתח דרכי פעולה חדשות.", "ליווי זה עשוי לקבל ביטויים שונים בהתאם למטרות ההכשרה, לאופי התפקיד ולשלב ההתפתחות המקצועית של המשתתפים. לעיתים הוא מתקיים במקביל לתהליך הלמידה, ולעיתים הוא נמשך גם לאחר סיום ההכשרה.", "מטרתו להעמיק את תהליכי הלמידה, לתמוך ביישומם בשטח ולחזק את יכולתם של המשתתפים להתמודד עם מורכבות המציאות החינוכית ולהוביל בה שינוי."]}, {"title": "מודלינג: המנחה וההכשרה", "body": ["בהכשרות חותם, המנחה אינו רק מי שמוביל את תהליך הלמידה, אלא גם מודל לחיקוי ודמות מקצועית שהמשתתפים יכולים ללמוד ממנה ועליה.", "המנחה מדגים בעשייתו את הערכים, התפיסות והפרקטיקות שאותם מבקשת ההכשרה לפתח. דרך ההוראה, ההנחיה, השיח, ההתנהלות, קבלת ההחלטות והיחסים שהוא יוצר עם המשתתפים, הוא מבטא הלכה למעשה את תפיסת העולם החינוכית של חותם.", "לכן, לדמותו של המנחה ולנוכחותו בתהליך ההכשרה יש חשיבות מיוחדת. לא רק מה שהוא אומר מלמד, אלא גם האופן שבו הוא פועל וההלימה בין תפיסותיו לבין התנהגותו.", "מנחי ההכשרות מגיעים מעולם העשייה החינוכית מורות ומורים, מנהלות ומנהלים, אנשי ונשות רשות ובעלי תפקידים נוספים המכירים את השדה מתוך התנסות מקצועית. היכרות זו מאפשרת להם להביא ללמידה ניסיון ממשי, דילמות אותנטיות והבנה של מורכבות המציאות החינוכית."]}, {"title": "תוכנית לימודית כוללת ואינטגרטיבית", "body": ["הכשרות חותם נשענות על תפיסה של תוכנית לימודים כוללת (Curriculum), הרואה במסלול ההתפתחות של המשתתפים חוויה אינטגרטיבית, קוהרנטית ומתמשכת.", "על פי תפיסה זו, ההכשרה אינה אוסף של מפגשים, תכנים או התנסויות נפרדים, אלא תהליך התפתחותי שלם, שבו כלל המרכיבים מתחברים לכדי חוויית למידה בעלת משמעות.", "התוכן, המתודות, הפרקטיקות, היחסים והדמויות המלוות את המשתתפים צריכים להתכתב זה עם זה, להזין זה את זה ולהיות בהלימה לערכי חותם ולמטרות ההכשרה.", "תכנון ההכשרה מתוך תפיסה זו מחייב חשיבה על רצף הלמידה, על הקשרים בין מרכיביה ועל האופן שבו כל התנסות תורמת להתפתחות הכוללת של המשתתפים מבחינה אישית, מקצועית ומנהיגותית."]}, {"title": "רפלקציה ואינטרוספקציה כמנועי התפתחות", "body": ["רפלקציה ואינטרוספקציה הן פרקטיקות מרכזיות בהכשרות חותם, המבקשות לפתח אנשי ונשות חינוך מודעים לעצמם, לסביבתם ולהשפעתם עליה.", "רפלקציה מאפשרת להתבונן בעשייה, לבחון החלטות, לזהות דפוסי פעולה ולהפיק לקחים מהתנסות. אינטרוספקציה מאפשרת להתבונן פנימה, לבחון את עולמנו הפנימי, את המניעים, הרגשות, האמונות והנחות היסוד המשפיעים על פעולתנו.", "ההכשרות מציעות כלים ומרחבים לתרגול מתמשך של שתי הפרקטיקות, במטרה לפתח יכולת ללמידה עצמאית, לשיפור מתמיד ולנטילת אחריות על הבחירות ועל התוצאות של העשייה המקצועית.", "התבוננות העצמית ובחינה ביקורתית של הפעולה הם תנאים לצמיחה אישית ומקצועית, להבנת מערכות יחסים ולפיתוח היכולת לפעול באופן מודע, אחראי ומותאם למציאות מורכבת."]}, {"title": "הכשרה המבוססת על תפיסה של למידה והתפתחות", "body": ["הכשרות חותם נשענות על תפיסה מפורשת של האופן שבו בני אדם לומדים ומתפתחים. למידה אינה העברת ידע מן המנחה אל המשתתף, וגם לא עצם ההשתתפות בחוויה או בשיח. היא מתרחשת כאשר הלומד פוגש ידע ורעיונות חדשים, מחבר אותם לידע ולניסיון הקיימים שלו, מעבד אותם, בוחן אותם מול המציאות, מתנסה בהם וחוזר אליהם לאורך זמן. לכן הכשרה אפקטיבית אינה מסתפקת בחוויה משמעותית או בתוכן איכותי. היא מתוכננת כך שהלומדים יהיו פעילים: יחשבו, ישאלו, יחברו בין חדש לישן, יתנסו, יקבלו משוב ויישמו את הלמידה בהקשרים משתנים.", "מקום מיוחד ניתן למאפייניהם של לומדים מבוגרים. המשתתפים מגיעים עם ידע, ניסיון מקצועי, זהות מקצועית ואתגרים ממשיים מן השדה. לכן הלמידה מבקשת להיות רלוונטית לעבודתם, להשתמש בניסיונם כמשאב, לאפשר בחירה, אחריות ומעורבות, וליצור מפגש משמעותי בין הידע החדש לקיים.", "דרכי הלמידה, כמו סדנה, דיון, הוראה מפורשת, חקר, תרגול ורפלקציה, אינן מטרה בפני עצמן. הן נבחרות לפי מה שאנו מבקשים שהמשתתפים ילמדו. באותו אופן, הערכת הלמידה אינה מסתכמת בשביעות רצון או בהשלמת משימות. לאורך התהליך אנו אוספים עדויות לכך שהמשתתפים מבינים וחושבים אחרת, מרחיבים את אפשרויות הפעולה שלהם ומשתמשים במה שלמדו בעשייתם המקצועית."]}];
+
+const CHARS = [
+  {short:"ההכשרה יוצאת ממחויבות לחינוך הציבורי ומכשירה אנשים שייקחו אחריות על שינוי."},
+  {short:"לומדים מתוך העשייה בשדה, וחוזרים אליה עם מה שלמדו."},
+  {short:"ההכשרה משנה את האופן שבו המשתתפים חושבים, פועלים ורואים את התפקיד שלהם."},
+  {short:"לומדים יחד, והקבוצה עצמה היא חלק מהלמידה."},
+  {short:"יש מי שמלווה את המשתתפים בשטח ועוזר להפוך התנסות ללמידה."},
+  {short:"המנחה מדגים בעצמו את מה שההכשרה מבקשת ללמד."},
+  {short:"כל חלקי ההכשרה מתחברים לתהליך אחד, עם רצף והיגיון."},
+  {short:"יש זמן וכלים להתבונן בעשייה, וגם פנימה."},
+  {short:"ההכשרה בנויה לפי האופן שבו מבוגרים לומדים: פעילים, מתנסים, מקבלים משוב."}
+].map((c,i)=>({...c, title:FULL[i].title, body:FULL[i].body}));
+
+const SCALE = ["כמעט לא נוכח","נוכח מעט","נוכח פה ושם","נוכח באופן קבוע","מרכזי בהכשרה","בלב ההכשרה"];
+
+// כתובת ה-Web App של Apps Script. ריק = מצב טיוטה, לא נשלח לשום מקום.
+const SHEET_URL = '';
+const STORE = 'hotam-traits-v1';
+
+/* ---------- מצב ---------- */
+let state = {name:'',training:'',r:Array(9).fill(0),ex:Array(9).fill(''),th:Array(9).fill(''),deep:[],deepen:'',embed:'',step:0,sent:false};
+try{ const s = JSON.parse(localStorage.getItem(STORE)||'null'); if(s && !s.sent) state = {...state,...s}; }catch(e){}
+
+const DEMO = new URLSearchParams(location.search);
+if(DEMO.has('demo')){ state.name='ניר בוסקו'; state.training='חותם נעמי'; if(DEMO.get('r')) state.r=[5,4,6,6,3,5,4,2,5]; }
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let saveT;
+function persist(){
+  try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){}
+  const el = $('#save'); el.classList.add('on'); clearTimeout(saveT); saveT = setTimeout(()=>el.classList.remove('on'),1400);
+}
+
+/* ---------- בניית מסכי המאפיינים ---------- */
+const host = $('#chars');
+CHARS.forEach((c,i)=>{
+  const sec = document.createElement('section');
+  sec.className = 'screen'; sec.dataset.screen = 'c'+i;
+  sec.innerHTML = `
+  <div class="card">
+    <div class="char-head"><div class="num">${String(i+1).padStart(2,'0')}</div><div class="of">מאפיין ${i+1} מתוך 9</div></div>
+    <h2 class="char-title">${esc(c.title)}</h2>
+    <p class="char-sub">${esc(c.short)}</p>
+    <div class="more">
+      <button class="more-btn" aria-expanded="false" aria-controls="more-${i}">
+        <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        <span class="more-label">לקריאת המאפיין המלא</span>
+      </button>
+      <div class="more-body" id="more-${i}"><div><div class="more-text">${c.body.map(p=>`<p>${esc(p)}</p>`).join('')}</div></div></div>
+    </div>
+
+    <div class="q">
+      <div class="q-title">באיזו מידה המאפיין הזה נוכח בהכשרה שלי?</div>
+      <div class="q-hint">בחרו נקודה. אין אמצע, צריך להכריע לאיזה צד.</div>
+      <div class="scale" role="radiogroup" aria-label="מידת הנוכחות">
+        <div class="dots">${SCALE.map((s,k)=>`<button class="dot" role="radio" aria-checked="false" aria-label="${k+1}: ${s}" data-v="${k+1}"><i></i><b>${k+1}</b></button>`).join('')}</div>
+        <div class="ends"><span>כמעט לא נוכח</span><span>בלב ההכשרה</span></div>
+        <div class="verdict">עוד לא סימנתם</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:26px">
+      <label class="label" for="ex-${i}">איפה רואים את זה בהכשרה שלי?<small>דוגמה אחת מספיקה</small></label>
+      <textarea class="area ex" id="ex-${i}" placeholder="מפגש, תרגיל, רגע או החלטה שממחישים את המקום של המאפיין בהכשרה"></textarea>
+    </div>
+    <button class="add">+ מחשבות נוספות על המאפיין</button>
+    <div class="field th-wrap" hidden>
+      <label class="label" for="th-${i}">מחשבות על המאפיין<small>לא חובה</small></label>
+      <textarea class="area th" id="th-${i}" placeholder="שאלות, הסתייגויות, רעיונות. כל מה שעולה."></textarea>
+    </div>
+  </div>`;
+  host.appendChild(sec);
+
+  const more = sec.querySelector('.more'), mb = sec.querySelector('.more-btn');
+  mb.addEventListener('click',()=>{
+    const o = more.classList.toggle('open');
+    mb.setAttribute('aria-expanded',o);
+    sec.querySelector('.more-label').textContent = o ? 'לסגירת הטקסט' : 'לקריאת המאפיין המלא';
+  });
+
+  const scale = sec.querySelector('.scale'), dots = [...sec.querySelectorAll('.dot')];
+  const verdict = sec.querySelector('.verdict'), ex = sec.querySelector('.ex');
+  function paint(pop){
+    const v = state.r[i];
+    dots.forEach((d,k)=>{
+      d.classList.toggle('sel',k+1===v); d.classList.toggle('fill',k+1<v);
+      d.setAttribute('aria-checked',k+1===v);
+      if(pop && k+1===v){ d.classList.remove('pop'); void d.offsetWidth; d.classList.add('pop'); }
+    });
+    verdict.textContent = v ? `${v} · ${SCALE[v-1]}` : 'עוד לא סימנתם';
+    verdict.classList.toggle('on',!!v);
+    if(v) scale.classList.remove('bad');
+    ex.placeholder = v && v<=2
+      ? 'מה מקשה על המאפיין להיכנס להכשרה? איפה הוא היה יכול להופיע?'
+      : 'מפגש, תרגיל, רגע או החלטה שממחישים את המקום של המאפיין בהכשרה';
+  }
+  dots.forEach(d=>d.addEventListener('click',()=>{ state.r[i]=+d.dataset.v; paint(true); persist(); }));
+  scale.addEventListener('keydown',e=>{
+    if(!['ArrowLeft','ArrowRight'].includes(e.key)) return;
+    e.preventDefault();
+    const dir = e.key==='ArrowLeft' ? 1 : -1; // RTL: שמאלה = יותר
+    state.r[i] = Math.min(6,Math.max(1,(state.r[i]||0)+dir)); paint(true); persist();
+    dots[state.r[i]-1].focus();
+  });
+
+  ex.value = state.ex[i];
+  ex.addEventListener('input',()=>{ state.ex[i]=ex.value; persist(); });
+  const add = sec.querySelector('.add'), thw = sec.querySelector('.th-wrap'), th = sec.querySelector('.th');
+  th.value = state.th[i];
+  const openTh = ()=>{ add.hidden = true; thw.hidden = false; };
+  if(state.th[i]) openTh();
+  add.addEventListener('click',()=>{ openTh(); th.focus(); });
+  th.addEventListener('input',()=>{ state.th[i]=th.value; persist(); });
+  paint(false);
+});
+
+/* ---------- שדות פתיחה וסיכום ---------- */
+[['name','name'],['training','training'],['deepen','deepen'],['embed','embed']].forEach(([id,key])=>{
+  const el = $('#'+id); el.value = state[key];
+  el.addEventListener('input',()=>{ state[key]=el.value; el.closest('.field')?.classList.remove('bad'); persist(); });
+});
+
+function buildChips(){
+  $('#chips').innerHTML = CHARS.map((c,i)=>`<button class="chip" aria-pressed="${state.deep.includes(i)}" data-i="${i}">${esc(c.title)}${state.r[i]?`<span class="v">${state.r[i]}</span>`:''}</button>`).join('');
+  $('#chips').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
+    const i = +b.dataset.i;
+    state.deep = state.deep.includes(i) ? state.deep.filter(x=>x!==i) : [...state.deep,i];
+    b.setAttribute('aria-pressed',state.deep.includes(i)); persist();
+  }));
+}
+
+/* ---------- ניווט ---------- */
+const ORDER = ['welcome',...CHARS.map((_,i)=>'c'+i),'summary','done'];
+const prog = $('#progress');
+prog.innerHTML = CHARS.map((_,i)=>`<div class="seg" data-i="${i}" title="${esc(CHARS[i].title)}"></div>`).join('');
+prog.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',()=>{
+  const i = +s.dataset.i;
+  if(state.step===0 && !checkWelcome()) return;
+  go(i+1);
+}));
+
+function go(step, back, quiet){
+  state.step = step; if(!quiet) persist();
+  const name = ORDER[step];
+  document.querySelectorAll('.screen').forEach(s=>{
+    const on = s.dataset.screen===name;
+    s.classList.toggle('on',on); s.classList.toggle('back',on && !!back);
+  });
+  prog.classList.toggle('on', step>=1 && step<=10);
+  prog.querySelectorAll('.seg').forEach((s,i)=>{
+    s.classList.toggle('done',!!state.r[i]); s.classList.toggle('cur',i===step-1);
+  });
+  $('#back').hidden = step===0 || name==='done';
+  $('#nav').style.display = name==='done' ? 'none' : '';
+  $('#next-label').textContent = step===0 ? (state.r.some(Boolean)?'ממשיכים מאיפה שעצרנו':'מתחילים') : name==='summary' ? 'שליחה' : step===9 ? 'לשאלות הסיום' : 'הבא';
+  if(name==='summary') buildChips();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function checkWelcome(){
+  let ok = true;
+  [['name','#f-name'],['training','#f-training']].forEach(([k,f])=>{
+    const bad = state[k].trim().length<2; $(f).classList.toggle('bad',bad); if(bad) ok=false;
+  });
+  if(!ok) $('.field.bad .input').focus();
+  return ok;
+}
+
+$('#next').addEventListener('click',()=>{
+  const name = ORDER[state.step];
+  if(name==='welcome'){ if(!checkWelcome()) return;
+    // חזרה לנקודה שבה עצרו
+    const firstOpen = state.r.findIndex(v=>!v);
+    return go(state.r.some(Boolean) ? (firstOpen<0 ? 10 : firstOpen+1) : 1);
+  }
+  if(name.startsWith('c')){
+    const i = +name.slice(1);
+    if(!state.r[i]){
+      const sc = document.querySelector(`[data-screen="c${i}"] .scale`);
+      sc.classList.add('bad'); sc.querySelector('.verdict').textContent = 'צריך לסמן נקודה לפני שממשיכים';
+      sc.scrollIntoView({block:'center',behavior:'smooth'}); return;
+    }
+    return go(state.step+1);
+  }
+  if(name==='summary') return submit();
+});
+$('#back').addEventListener('click',()=>go(Math.max(0,state.step-1),true));
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && e.target.tagName==='INPUT'){ e.preventDefault(); $('#next').click(); }
+});
+
+/* ---------- שליחה ---------- */
+async function submit(){
+  const missing = state.r.findIndex(v=>!v);
+  if(missing>=0) return go(missing+1);
+  const btn = $('#next'), st = $('#status');
+  btn.disabled = true; $('#next-label').textContent = 'שולחים...'; st.textContent = '';
+  const payload = {
+    name:state.name.trim(), training:state.training.trim(),
+    ratings:state.r, examples:state.ex.map(s=>s.trim()), thoughts:state.th.map(s=>s.trim()),
+    titles:CHARS.map(c=>c.title),
+    deepTopics:state.deep.sort((a,b)=>a-b).map(i=>CHARS[i].title),
+    deepen:state.deepen.trim(), embed:state.embed.trim(),
+    ua: navigator.userAgent.slice(0,160)
+  };
+  try{
+    if(SHEET_URL){
+      const res = await fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+      const j = await res.json();
+      if(!j.ok) throw new Error(j.error||'failed');
+    }else{
+      console.info('[טיוטה] לא מחובר לגיליון. זה מה שהיה נשלח:', payload);
+      await new Promise(r=>setTimeout(r,700));
+    }
+    state.sent = true; persist();
+    showDone();
+  }catch(err){
+    btn.disabled = false; $('#next-label').textContent = 'לנסות שוב';
+    st.textContent = 'השליחה לא הצליחה. התשובות שמורות במכשיר, נסו שוב בעוד רגע.';
+  }
+}
+
+function showDone(){
+  const first = state.name.trim().split(/\s+/)[0];
+  $('#done-title').textContent = `תודה, ${first}`;
+  $('#map-title').textContent = `המפה של ${state.training.trim()}`;
+  $('#map').innerHTML = CHARS.map((c,i)=>`
+    <div class="row"><div class="row-name">${esc(c.title)}</div>
+    <div class="bar anim" aria-label="${state.r[i]} מתוך 6">${[1,2,3,4,5,6].map(k=>`<span class="${k<=state.r[i]?'on':''}" style="animation-delay:${i*70+k*40}ms;transform-origin:right"></span>`).join('')}</div></div>`).join('');
+  go(ORDER.indexOf('done'));
+}
+
+go(0, false, true);
+// בדיקות: ?demo=מסך&r=1 ממלא נתוני דוגמה (לא משפיע על משתמשים רגילים)
+(()=>{const q=new URLSearchParams(location.search); if(!q.has('demo')) return;
+  if(q.get('open')) setTimeout(()=>document.querySelector('.screen.on .more-btn')?.click(),50);
+  const d=q.get('demo'); d==='done'?showDone():go(+d||0,false,true);})();
+</script>
+</body>
+</html>
